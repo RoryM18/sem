@@ -24,7 +24,7 @@ public class App
         a.disconnect();
 
         //Print all salaries from database
-        //a.printSalaries(employees);
+        a.printSalaries(employees);
 
         //print all salaries of a given Role from database
         a.printSalariesOfGivenRole(role);
@@ -209,13 +209,13 @@ public class App
             Statement stmt = con.createStatement();
             // Create string for SQL statement
             String strSelect =
-                    "SELECT employees.emp_no, employees.first_name, employees.last_name, salaries.salary,"
-                            + "FROM employees, salaries, titles,"
-                            + "WHERE employees.emp_no = salaries.emp_no,"
-                            + "AND employees.emp_no = titles.emp_no,"
-                            + "AND salaries.to_date = '9999-01-01'"
-                            + "AND titles.to_date = '9999-01-01'"
-                            + "AND titles.title = 'Engineer'"
+                    "SELECT employees.emp_no, employees.first_name, employees.last_name, salaries.salary "
+                            + "FROM employees, salaries, titles "
+                            + "WHERE employees.emp_no = salaries.emp_no "
+                            + "AND employees.emp_no = titles.emp_no "
+                            + "AND salaries.to_date = '9999-01-01' "
+                            + "AND titles.to_date = '9999-01-01' "
+                            + "AND titles.title = 'Engineer' "
                             + "ORDER BY employees.emp_no ASC";
             // Execute SQL statement
             ResultSet rset = stmt.executeQuery(strSelect);
