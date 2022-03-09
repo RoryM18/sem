@@ -24,7 +24,7 @@ public class App
         a.disconnect();
 
         //Print all salaries from database
-        //a.printSalaries(employees);
+        a.printSalaries(employees);
 
         //print all salaries of a given Role from database
         a.printSalariesOfGivenRole(role);
