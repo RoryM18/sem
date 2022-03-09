@@ -209,10 +209,10 @@ public class App
             Statement stmt = con.createStatement();
             // Create string for SQL statement
             String strSelect =
-                    "SELECT employees.emp_no, employees.first_name, employees.last_name, salaries.salary"
-                            + "FROM employees, salaries, titles"
-                            + "WHERE employees.emp_no = salaries.emp_no"
-                            + "AND employees.emp_no = titles.emp_no"
+                    "SELECT employees.emp_no, employees.first_name, employees.last_name, salaries.salary,"
+                            + "FROM employees, salaries, titles,"
+                            + "WHERE employees.emp_no = salaries.emp_no,"
+                            + "AND employees.emp_no = titles.emp_no,"
                             + "AND salaries.to_date = '9999-01-01'"
                             + "AND titles.to_date = '9999-01-01'"
                             + "AND titles.title = 'Engineer'"
