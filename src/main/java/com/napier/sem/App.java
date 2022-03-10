@@ -217,7 +217,34 @@ public class App {
         }
     }
 
-    public Department getDepartment(String dept_name) {
+    public Department getDepartment(String sales) {
+        try {
+            // Create an SQL statement
+            Statement stmt = con.createStatement();
+            // Create string for SQL statement
+            String strSelect =
+                    "SELECT dept_no, dept_name "
+                            + "FROM Department "
+                            + "WHERE dept_name = " + sales;
+            // Execute SQL statement
+            ResultSet rset = stmt.executeQuery(strSelect);
+            // Return new employee if valid.
+            // Check one is returned
+            if (rset.next()) {
+                Department dept = new Department();
+                dept.dept_no = rset.getInt("dept_no");
+                dept.dept_name = rset.getString("dept_name");
+                return dept;
+            } else
+                return null;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get employee details");
+            return null;
+        }
+    }
+
+    public ArrayList<Employee> getSalariesByDepartment(Department dept) {
         return null;
     }
 }
