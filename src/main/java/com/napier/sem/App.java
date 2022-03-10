@@ -221,6 +221,7 @@ public class App {
         }
     }
 
+    //Method to get departments from database
     public Department getDepartment(String dept_name) {
         try {
             // Create an SQL statement
@@ -248,6 +249,7 @@ public class App {
         }
     }
 
+    //Method to get salaries by department from the database
     public ArrayList<Employee> getSalariesByDepartment(String dept) {
         try {
             // Create an SQL statement
@@ -282,6 +284,7 @@ public class App {
         }
     }
 
+    //Prints salaries of each employee from a certain department 
     public void printSalariesOfAaDepartment(ArrayList<Employee> employees) {
         // Print header
         System.out.println(String.format("%-10s %-15s %-20s %-8s", "Emp No", "First Name", "Last Name", "Salary"));
