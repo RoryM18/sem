@@ -139,7 +139,6 @@ public class App
                             + emp.last_name + "\n"
                             + emp.title + "\n"
                             + "Salary:" + emp.salary + "\n"
-                            + emp.dept_name + "\n"
                             + "Manager: " + emp.manager + "\n");
         }
         if (emp == null)
