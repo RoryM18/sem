@@ -37,7 +37,38 @@ public class AppTest
         app.printSalaries(employess);
     }
     @Test
-    void printSalaries()
+    void printSalariesTestContainsNonNull()
+    {
+        ArrayList<Employee> employees = new ArrayList<Employee>();
+        Employee emp = new Employee();
+        emp.emp_no = 1;
+        emp.first_name = "Kevin";
+        emp.last_name = "Chalmers";
+        emp.title = "Engineer";
+        emp.salary = 55000;
+        employees.add(emp);
+        app.printSalaries(employees);
+    }
+    @Test
+    void displayEmployeeTestNull()
+    {
+        app.displayEmployee(null);
+    }
+    @Test
+    void displayEmployeeTestEmpty()
+    {
+        ArrayList<Employee> employess = new ArrayList<Employee>();
+        app.displayEmployee(null);
+    }
+    @Test
+    void displayEmployeeTestContainesNull()
+    {
+        ArrayList<Employee> employess = new ArrayList<Employee>();
+        employess.add(null);
+        app.printSalaries(employess);
+    }
+    @Test
+    void displayEmployeeTestContainesNonNull()
     {
         ArrayList<Employee> employees = new ArrayList<Employee>();
         Employee emp = new Employee();

@@ -142,6 +142,11 @@ public class App
                             + emp.dept_name + "\n"
                             + "Manager: " + emp.manager + "\n");
         }
+        if (emp == null)
+        {
+            System.out.println("No employees");
+            return;
+        }
     }
 
     /**
