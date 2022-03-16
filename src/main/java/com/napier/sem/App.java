@@ -33,7 +33,7 @@ public class App
 
         //Print all salaries from database
         a.printSalaries(employees);
-        a.printSalaries(roles);
+        a.printSalariesOfGivenRole(roles);
 
         //print all salaries of a given Role from database
         //a.printSalariesOfGivenRole(role);
@@ -274,5 +274,7 @@ public class App
             System.out.println(emp_string);
         }
     }
+
+
 
 }
