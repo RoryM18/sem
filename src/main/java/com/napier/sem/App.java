@@ -17,13 +17,13 @@ public class App
             a.connect(args[0], Integer.parseInt(args[1]));
         }
 
-        //Department dept = a.getDepartment("Development");
-        //ArrayList<Employee> department = a.getSalariesByDepartment(dept);
+        Department dept = a.getDepartment("Sales");
+        ArrayList<Employee> department = a.getSalariesByDepartment(dept);
 
         // Extract employee salary information
         ArrayList<Employee> employees = a.getAllSalaries();
         ArrayList<Employee> roles = a.getAllSalariesOfAGivenRole();
-       // ArrayList<Employee> role = a.getAllSalariesOfGivenRole();
+       //ArrayList<Employee> department = a.getSalariesByDepartment("Sales");
 
         // Test the size of the returned data - should be 240124
        // System.out.println(employees.size());
@@ -34,6 +34,7 @@ public class App
         //Print all salaries from database
         a.printSalaries(employees);
         a.printSalariesOfGivenRole(roles);
+        a.printSalaries(department);
 
         //print all salaries of a given Role from database
         //a.printSalariesOfGivenRole(role);
@@ -275,6 +276,79 @@ public class App
         }
     }
 
+    public Department getDepartment(String dept_name)
+    {
 
+        try
+        {
+            // Create an SQL statement
+            Statement stmt = con.createStatement();
+            // Create string for SQL statement
+            String strSelect =
+                    "SELECT dept_no, dept_name "
+                            + "FROM Department "
+                            + "WHERE dept_name = " + dept_name;
+            // Execute SQL statement
+            ResultSet rset = stmt.executeQuery(strSelect);
+            // Return new employee if valid.
+            // Check one is returned
+            if (rset.next())
+            {
+                Department dept = new Department();
+                dept.dept_no = rset.getInt("dept_no");
+                dept.dept_name = rset.getString("dept_name");
+                return dept;
+            }
+            else
+                return null;
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get employee details");
+            return null;
+        }
+    }
+
+    public ArrayList<Employee> getSalariesByDepartment(Department dept)
+    {
+        try
+        {
+            // Create an SQL statement
+            Statement stmt = con.createStatement();
+            // Create string for SQL statement
+            String strSelect =
+                    "SELECT employees.emp_no, employees.first_name, employees.last_name, salaries.salary "
+                        + "FROM employees, salaries, dept_emp, departments "
+                        + "WHERE employees.emp_no = salaries.emp_no "
+                        + "AND employees.emp_no = dept_emp.emp_no "
+                        + "AND dept_emp.dept_no = departments.dept_no "
+                        + "AND salaries.to_date = '9999-01-01' "
+                        + "AND departments.dept_no = 'Sales' "
+                        + "ORDER BY employees.emp_no ASC ";
+            // Execute SQL statement
+            ResultSet rset = stmt.executeQuery(strSelect);
+            // Extract employee information
+            ArrayList<Employee> depart = new ArrayList<>();
+            while (rset.next())
+            {
+                Employee emp = new Employee();
+                emp.emp_no = rset.getInt("employees.emp_no");
+                emp.first_name = rset.getString("employees.first_name");
+                emp.last_name = rset.getString("employees.last_name");
+                emp.salary = rset.getInt("salaries.salary");
+                dept.dept_no = rset.getInt("department.dept_no");
+                dept.dept_name = rset.getString("department.dept_name");
+                depart.add(emp);
+            }
+            return depart;
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get salary details");
+            return null;
+        }
+    }
 
 }
