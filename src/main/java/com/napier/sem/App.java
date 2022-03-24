@@ -1,5 +1,9 @@
 package com.napier.sem;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -7,34 +11,36 @@ public class App
 {
     public static void main(String[] args)
     {
-        // Create new Application
-        App a = new App();
+        // Create new Application and connect to database
+        App app = new App();
 
-        // Connect to database
-        if(args.length < 1){
-            a.connect("localhost:33060", 30000);
-        }else{
-            a.connect(args[0], Integer.parseInt(args[1]));
+        if (args.length < 1) {
+            app.connect("localhost:33060", 0);
+        } else {
+            app.connect(args[0], Integer.parseInt(args[1]));
         }
 
-        Department dept = a.getDepartment("Sales");
-        ArrayList<Employee> department = a.getSalariesByDepartment(dept);
+        ArrayList<Employee> employees = app.getSalariesByRole("Manager");
+        app.outputEmployees(employees, "ManagerSalaries.md");
+
+        // Disconnect from database
+        app.disconnect();
+
+        Department dept = app.getDepartment("Sales");
+        ArrayList<Employee> department = app.getSalariesByDepartment(dept);
 
         // Extract employee salary information
-        ArrayList<Employee> employees = a.getAllSalaries();
-        ArrayList<Employee> roles = a.getAllSalariesOfAGivenRole();
+        //ArrayList<Employee> employees = app.getAllSalaries();
+        //ArrayList<Employee> roles = app.getAllSalariesOfAGivenRole();
        //ArrayList<Employee> department = a.getSalariesByDepartment("Sales");
 
         // Test the size of the returned data - should be 240124
        // System.out.println(employees.size());
 
-        // Disconnect from database
-        a.disconnect();
-
         //Print all salaries from database
-        a.printSalaries(employees);
-        a.printSalariesOfGivenRole(roles);
-        a.printSalaries(department);
+        app.printSalaries(employees);
+        //app.printSalariesOfGivenRole(roles);
+        app.printSalaries(department);
 
         //print all salaries of a given Role from database
         //a.printSalariesOfGivenRole(role);
@@ -215,7 +221,7 @@ public class App
         }
     }
 
-    public ArrayList<Employee> getAllSalariesOfAGivenRole()
+    public ArrayList<Employee> getSalariesByRole(String manager)
     {
         try
         {
@@ -223,14 +229,18 @@ public class App
             Statement stmt = con.createStatement();
             // Create string for SQL statement
             String strSelect =
-                    "SELECT employees.emp_no, employees.first_name, employees.last_name, salaries.salary "
-                            + "FROM employees, salaries, titles "
-                            + "WHERE employees.emp_no = salaries.emp_no "
-                            + "AND employees.emp_no = titles.emp_no "
-                            + "AND salaries.to_date = '9999-01-01' "
-                            + "AND titles.to_date = '9999-01-01' "
-                            + "AND titles.title = 'Engineer' "
-                            + "ORDER BY employees.emp_no ASC ";
+                    "SELECT employees.emp_no, employees.first_name, employees.last_name, titles.title, salaries.salary, departments.dept_name, dept_manager.emp_no "
+                    + "FROM employees, salaries, titles, departments, dept_emp, dept_manager "
+                    + "WHERE employees.emp_no = salaries.emp_no "
+                    + "AND salaries.to_date = '9999-01-01' "
+                    + "AND titles.emp_no = employees.emp_no "
+                    + "AND titles.to_date = '9999-01-01' "
+                    + "AND dept_emp.emp_no = employees.emp_no "
+                    + "AND dept_emp.to_date = '9999-01-01' "
+                    + "AND departments.dept_no = dept_emp.dept_no "
+                    + "AND dept_manager.dept_no = dept_emp.dept_no "
+                    + "AND dept_manager.to_date = '9999-01-01' "
+                    + "AND titles.title = 'Manager' ";
             // Execute SQL statement
             ResultSet rset = stmt.executeQuery(strSelect);
             // Extract employee information
@@ -254,25 +264,37 @@ public class App
         }
     }
 
-    public void printSalariesOfGivenRole(ArrayList<Employee> roles)
-    {
+    /**
+     * Outputs to Markdown
+     *
+     * @param employees
+     */
+    public void outputEmployees(ArrayList<Employee> employees, String filename) {
         // Check employees is not null
-        if (roles == null)
-        {
+        if (employees == null) {
             System.out.println("No employees");
             return;
         }
+
+        StringBuilder sb = new StringBuilder();
         // Print header
-        System.out.println(String.format("%-10s %-15s %-20s %-8s", "Emp No", "First Name", "Last Name", "Salary"));
+        sb.append("| Emp No | First Name | Last Name | Title | Salary | Department |                    Manager |\r\n");
+        sb.append("| --- | --- | --- | --- | --- | --- | --- |\r\n");
         // Loop over all employees in the list
-        for (Employee emp : roles)
-        {
-            if (emp == null)
-                continue;
-            String emp_string =
-                    String.format("%-10s %-15s %-20s %-8s",
-                            emp.emp_no, emp.first_name, emp.last_name, emp.salary);
-            System.out.println(emp_string);
+        for (Employee emp : employees) {
+            if (emp == null) continue;
+            sb.append("| " + emp.emp_no + " | " +
+                    emp.first_name + " | " + emp.last_name + " | " +
+                    emp.title + " | " + emp.salary + " | "
+                    + emp.dept_name + " | " + emp.manager + " |\r\n");
+        }
+        try {
+            new File("./reports/").mkdir();
+            BufferedWriter writer = new BufferedWriter(new FileWriter(new                                 File("./reports/" + filename)));
+            writer.write(sb.toString());
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
